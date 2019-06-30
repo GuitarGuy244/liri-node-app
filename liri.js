@@ -1,9 +1,8 @@
-//require("dotenv").config();
-var dotenv = require("dotenv");
-var key = require("./key.js");
+require("dotenv").config();
+var keys = require("./keys.js");
 var moment = require("moment");
 var axios = require("axios");
-//var SpotifyWebApi = require('spotify-web-api-node');
+var Spotify = require("node-spotify-api");
 var spotify = new Spotify(keys.spotify);
 
 var search = process.argv[2];
@@ -32,14 +31,25 @@ function liri()
             concert();
             break;
         case "spotify-this-song":
+            function song()
+            {
                 spotify
-                .search({ type: 'track', query: 'All the Small Things' })
+                .search({ type: 'track', query: artist })
                 .then(function(response) {
-                  console.log(response);
+                    var jsonData = response.tracks.items[0];
+                    var info = [
+                        "Artist: "+jsonData.artists[0].name,
+                        "Title: "+jsonData.name,
+                        "Preview Song: "+jsonData.uri,
+                        "Album: "+jsonData.album.name
+                    ].join("\n\n")
+                  console.log(info);
                 })
                 .catch(function(err) {
                   console.log(err);
                 });
+            }
+            song();
             break;
         case "movie-this":
             function movie()
